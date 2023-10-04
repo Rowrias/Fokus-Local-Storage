@@ -1,7 +1,9 @@
-//  Seleciona uma lista no index.html
-const taskListContainer = document.querySelector('.app__section-task-list')
+const taskListContainer = document.querySelector('.app__section-task-list')     //
+const toggleFormTaskBtn = document.querySelector('.app__button--add-task')      // Botão " + Adicionar nova tarefa"
+const formTask = document.querySelector('.app__form-add-task')                  // Formulario que abre dps de clicar no Botão " + Adicionar nova tarefa"
+const formLabel = document.querySelector('.app__form-label')                    // Label que esta escrito "Adicionando Tarefa"
 
-//  
+//  Tarefas dentro de uma lista
 let tarefas = [
     {
         descricao: 'Tarefa Concluída',
@@ -24,7 +26,7 @@ const taskIconSvg = `
 </svg>
 `
 
-//  função que cria uma tarefa
+//  Função que organiza o conteudo da tarefa para o HTML
 function createTask(tarefa) {
 
     const li = document.createElement('li')                                 // <li></li>
@@ -33,19 +35,29 @@ function createTask(tarefa) {
     const svgIcon = document.createElement('svg')                           // <svg></svg>
     svgIcon.innerHTML = taskIconSvg                                         // <svg> taskIconSvg </svg>
 
-    const paragraph = document.createElement('p')                           //<p></p>
-    paragraph.classList.add('app__section-task-list-item-description')      //<p class="app__section-task-list-item-description"></p>
+    const paragraph = document.createElement('p')                           // <p></p>
+    paragraph.classList.add('app__section-task-list-item-description')      // <p class="app__section-task-list-item-description"></p>
 
     paragraph.textContent = tarefa.descricao                                //<p class="app__section-task-list-item-description"> tarefa.descricao </p>
 
     li.appendChild(svgIcon)                                                 // <li> <svg> taskIconSvg </svg> </li>
     li.appendChild(paragraph)                                               // <li> <svg> taskIconSvg </svg>  <p> tarefa.descricao </p> </li>
 
-    return li
+
+    return li                                                               // <li class="app__section-task-list-item">
+                                                                            //      <svg> taskIconSvg </svg>
+                                                                            //      <p class="app__section-task-list-item-description"> tarefa.descricao </p>
+                                                                            // </li>
 }
 
-// mostra as Tarefas na tela
+//  Mostra as Tarefas na tela
 tarefas.forEach(task => {
     const taskItem = createTask(task)
     taskListContainer.appendChild(taskItem)
+})
+
+//  Abre o Formulário quando clica no botão adicionar tarefas
+toggleFormTaskBtn.addEventListener('click', () => {
+    formTask.classList.toggle('hidden')
+    formLabel.textContent = 'Adicionando tarefa'
 })
