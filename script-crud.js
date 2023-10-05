@@ -1,18 +1,22 @@
 const taskListContainer = document.querySelector('.app__section-task-list')     //
-const toggleFormTaskBtn = document.querySelector('.app__button--add-task')      // Botão " + Adicionar nova tarefa"
-const formTask = document.querySelector('.app__form-add-task')                  // Formulario que abre dps de clicar no Botão " + Adicionar nova tarefa"
-const formLabel = document.querySelector('.app__form-label')                    // Label que esta escrito "Adicionando Tarefa"
+
+const toggleFormTaskBtn = document.querySelector('.app__button--add-task')              // Botão que abre o Formulario " + Adicionar nova tarefa"
+const cancelFormTaskBtn = document.querySelector('.app__form-footer__button--cancel')   // Botão que fecha o Formulario " X cancelar"
+const formTask = document.querySelector('.app__form-add-task')                          // O Formulario que abre dps de clicar no Botão " + Adicionar nova tarefa"
+const formLabel = document.querySelector('.app__form-label')                            // Label que esta escrito "Adicionando Tarefa"
+
+const textarea = document.querySelector('.app__form-textarea')                          // Onde digita a tarefa
 
 //  Tarefas dentro de uma lista
 let tarefas = [
-    {
-        descricao: 'Tarefa Concluída',
-        concluida: true
-    },
-    {
-        descricao: 'Tarefa Pendente',
-        concluida: false
-    }
+    // {
+    //     descricao: 'Tarefa Concluída',
+    //     concluida: true
+    // },
+    // {
+    //     descricao: 'Tarefa Pendente',
+    //     concluida: false
+    // }
 ]
 
 //  Icone
@@ -50,14 +54,40 @@ function createTask(tarefa) {
                                                                             // </li>
 }
 
-//  Mostra as Tarefas na tela
+//  Mostra as Tarefas na "Lista de tarefas:"
 tarefas.forEach(task => {
     const taskItem = createTask(task)
     taskListContainer.appendChild(taskItem)
 })
 
-//  Abre o Formulário quando clica no botão adicionar tarefas
+//  Abre o Formulário quando clica no botão " + adicionar tarefas"
 toggleFormTaskBtn.addEventListener('click', () => {
     formTask.classList.toggle('hidden')
     formLabel.textContent = 'Adicionando tarefa'
+    textarea.value = ''
 })
+
+//  Fecha o Formulario e apaga o texto
+const limparForm = () => {
+    textarea.value = ''
+    formTask.classList.add('hidden')
+}
+
+//  Fecha o Formulário quando clica no botão " X cancelar"
+cancelFormTaskBtn.addEventListener('click', () => {
+    limparForm()
+})
+
+//  Captura a tarefa no "adicionando tarefa" e manda pra "lista de tarefas:"
+formTask.addEventListener('submit', (evento) => {
+    evento.preventDefault()
+    const task = {
+        descricao: textarea.value,
+        concluida: false
+    }
+    tarefas.push(task)
+    const taskItem = createTask(task)
+    taskListContainer.appendChild(taskItem)
+    limparForm()
+})
+
