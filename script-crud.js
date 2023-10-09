@@ -38,6 +38,9 @@ const taskIconSvg = `
 let tarefaSelecionada = null
 let itemTarefaSelecionada = null
 
+let tarefaEmEdicao = null
+let paragraphEmEdicao = null
+
 // Função que seleciona tarefas que já existem
 const selecionaTarefa = (tarefa, elemento) => {
 
@@ -58,6 +61,28 @@ taskAtiveDescription.textContent = tarefa.descricao
 elemento.classList.add('app__section-task-list-item-active')
 }
 
+//  Fecha o Formulario e apaga o texto
+const limparForm = () => {
+    tarefaEmEdicao = null
+    paragraphEmEdicao = null
+    textarea.value = ''
+    formTask.classList.add('hidden')
+}
+
+// 
+const selecionaTarefaParaEditar = (tarefa, elemento) => {
+    if(tarefaEmEdicao == tarefa) {
+        limparForm()
+        return
+    }
+
+    formLabel.textContent='Editando tarefa'
+    tarefaEmEdicao=tarefa
+    paragraphEmEdicao=elemento
+    textarea.value = tarefa.descricao
+    formTask.classList.remove('hidden')
+}
+
 //  Função que organiza o conteudo da tarefa para o HTML
 function createTask(tarefa) {
 
@@ -70,9 +95,18 @@ function createTask(tarefa) {
     const paragraph = document.createElement('p')                           // <p></p>
     paragraph.classList.add('app__section-task-list-item-description')      // <p class="app__section-task-list-item-description"></p>
 
-    paragraph.textContent = tarefa.descricao                                //<p class="app__section-task-list-item-description"> tarefa.descricao </p>
+    paragraph.textContent = tarefa.descricao                                // <p class="app__section-task-list-item-description"> tarefa.descricao </p>
 
-    const button = document.createElement('button')
+    const button = document.createElement('button')                         // <p class="app__section-task-list-item-description"> tarefa.descricao <button> </button> </p>
+    button.classList.add('app_button-edit')                                // <p class="app__section-task-list-item-description"> tarefa.descricao <button class="app__button-edit"> </button> </p>   
+    const editIcon = document.createElement('img')
+    editIcon.setAttribute('src', '/imagens/edit.png')
+    button.appendChild(editIcon)                                            // <p class="app__section-task-list-item-description"> tarefa.descricao <button class="app__button-edit"> </button> editIcon </p>
+
+    button.addEventListener('click', (event) => {
+        event.stopPropagation()
+        selecionaTarefaParaEditar(tarefa, paragraph)
+    })
 
     li.onclick = () => {
         selecionaTarefa(tarefa, li)
@@ -92,11 +126,12 @@ function createTask(tarefa) {
 
     li.appendChild(svgIcon)                                                 // <li> <svg> taskIconSvg </svg> </li>
     li.appendChild(paragraph)                                               // <li> <svg> taskIconSvg </svg>  <p> tarefa.descricao </p> </li>
-
+    li.appendChild(button)                                                  // <li> <svg> taskIconSbg </svg>  <p> tarefa.descricao </p>  <button> editIcon </button>
 
     return li                                                               // <li class="app__section-task-list-item">
                                                                             //      <svg> taskIconSvg </svg>
                                                                             //      <p class="app__section-task-list-item-description"> tarefa.descricao </p>
+                                                                            //      <button class="app__button-edit"> editIcon </button>
                                                                             // </li>
 }
 
@@ -113,12 +148,6 @@ toggleFormTaskBtn.addEventListener('click', () => {
     textarea.value = ''
 })
 
-//  Fecha o Formulario e apaga o texto
-const limparForm = () => {
-    textarea.value = ''
-    formTask.classList.add('hidden')
-}
-
 //  Fecha o Formulário quando clica no botão " X cancelar"
 cancelFormTaskBtn.addEventListener('click', () => {
     limparForm()
@@ -132,6 +161,10 @@ const updateLocalStorage = () => {
 //  Captura a tarefa no "adicionando tarefa" e manda pra "lista de tarefas:"
 formTask.addEventListener('submit', (evento) => {
     evento.preventDefault()
+    if(tarefaEmEdicao) {
+        tarefaEmEdicao.descricao = textarea.value
+        paragraphEmEdicao.textContent = textarea.value
+    } else {
     const task = {
         descricao: textarea.value,
         concluida: false
@@ -139,6 +172,7 @@ formTask.addEventListener('submit', (evento) => {
     tarefas.push(task)
     const taskItem = createTask(task)
     taskListContainer.appendChild(taskItem)
+}
     updateLocalStorage()
     limparForm()
 })
