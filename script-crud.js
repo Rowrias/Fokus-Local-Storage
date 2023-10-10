@@ -1,3 +1,4 @@
+// Variaveis
 const taskListContainer = document.querySelector('.app__section-task-list')                     //
 
 const toggleFormTaskBtn = document.querySelector('.app__button--add-task')                      // Botão que abre o Formulario " + Adicionar nova tarefa"
@@ -9,7 +10,10 @@ const taskAtiveDescription = document.querySelector('.app__section-active-task-d
 
 const textarea = document.querySelector('.app__form-textarea')                                  // O Campo onde digita a tarefa
 
-const btnDeletar = document.querySelector('.app__form-footer__button--delete')
+const btnDeletar = document.querySelector('.app__form-footer__button--delete')                  //
+
+const btnDeletarConcluida = document.querySelector('#btn-remover-concluidas')                   // Botão que remove as tarefas concluídas
+const btnDeletarTodas = document.querySelector('#btn-remover-todas')                            // Botão que remove todas as tarefas
 
 const localStorageTarefas = localStorage.getItem('tarefas')                                     // Pega os itens na lista de tarefas e coloca no local storage
 
@@ -36,7 +40,7 @@ const taskIconSvg = `
 </svg>
 `
 
-// 
+// Variaves
 let tarefaSelecionada = null
 let itemTarefaSelecionada = null
 
@@ -74,7 +78,7 @@ const limparForm = () => {
     formTask.classList.add('hidden')
 }
 
-// 
+//  Seleciona tarefa para editar
 const selecionaTarefaParaEditar = (tarefa, elemento) => {
     if(tarefaEmEdicao == tarefa) {
         limparForm()
@@ -123,7 +127,7 @@ function createTask(tarefa) {
             event.stopPropagation()
             button.setAttribute('disabled', true)
             li.classList.add('app__section-task-list-item-complete')
-            tarefaSelecionada.convluida = true
+            tarefaSelecionada.concluida = true
             updateLocalStorage()
         }
     })
@@ -157,7 +161,7 @@ toggleFormTaskBtn.addEventListener('click', () => {
     textarea.value = ''
 })
 
-//
+//  Remove a tarefa selecionada
 btnDeletar.addEventListener('click', () => {
     if(tarefaSelecionada) {
         const index = tarefas.indexOf(tarefaSelecionada)
@@ -174,6 +178,25 @@ btnDeletar.addEventListener('click', () => {
     updateLocalStorage()
     limparForm()
 })
+
+//  Checagem para remover tarefas
+const removerTarefas = (somenteConcluidas) => {
+    const seletor = somenteConcluidas ? '.app__section-task-list-item-complete' : '.app__section-task-list-item'
+    document.querySelectorAll(seletor).forEach((element) => {
+        element.remove();
+    })
+
+    tarefas = somenteConcluidas ? tarefas.filter(t => !t.concluida) : []
+    updateLocalStorage()
+}
+
+//  Deleta todas as tarefas concluídas
+btnDeletarConcluida.addEventListener('click', ()=> 
+removerTarefas(true))
+
+//  Deleta todas as tarefas
+btnDeletarTodas.addEventListener('click', () => 
+removerTarefas(false))
 
 //  Fecha o Formulário quando clica no botão " X cancelar"
 cancelFormTaskBtn.addEventListener('click', () => {
@@ -204,6 +227,7 @@ formTask.addEventListener('submit', (evento) => {
     limparForm()
 })
 
+//  Marca a tarefa como finalizada quando é concluída
 document.addEventListener('TarefaFinalizada', function (e) {
     if(tarefaSelecionada) {
         tarefaSelecionada.concluida = true
